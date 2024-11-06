@@ -273,10 +273,10 @@ extension KSVideoPlayer.Coordinator: KSPlayerLayerDelegate {
         if state == .readyToPlay {
             playbackRate = layer.player.playbackRate
         } else if state == .bufferFinished {
-            isMaskShow = false
+            mask(show: true)
         } else {
             if state != .preparing, !isMaskShow {
-                isMaskShow = true
+                mask(show: true)
             }
         }
     }
