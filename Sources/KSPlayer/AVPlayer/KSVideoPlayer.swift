@@ -275,9 +275,9 @@ extension KSVideoPlayer.Coordinator: KSPlayerLayerDelegate {
         } else if state == .bufferFinished {
             mask(show: true)
         } else {
-            if state != .preparing, !isMaskShow {
-                mask(show: true)
-            }
+//            if state != .preparing, !isMaskShow {
+//                mask(show: true)
+//            }
         }
     }
 
