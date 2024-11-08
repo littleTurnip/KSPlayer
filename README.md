@@ -21,6 +21,7 @@ Feature       | Free      |
 |Use memory cache for fast seek in short time range|✅|
 |Cache data to Hard Drive,Preload data to Hard Drive|❌|
 |Full display of ass subtitles effect(Render as image using libass)|✅|
+|Play videos in a small window in the App (resumable, supports tvos and ios)|❌|
 |FFmpeg version|7.0.2|
 |Record video|✅|✅|
 |360° panorama video|✅|✅|
@@ -42,10 +43,12 @@ App Store Link| TestFlight Link |
 |[Alplayer](https://apps.apple.com/us/app/alplayer/id1660917007)||
 |[APTV](https://apps.apple.com/app/aptv/id1630403500)||
 |[homeTV IPTV Player](https://apps.apple.com/app/hometv-iptv-player/id1636701357)||
+|[IPTV +](https://apps.apple.com/app/iptv-my-smart-iptv-player/id1525121231)||
 |[LillyPlayer Video Player](https://apps.apple.com/app/lillyplayer-video-player/id1446967273)||
 |[SenPlayer](https://apps.apple.com/app/senplayer-hdr-media-player/id6443975850)||
 |[Smart IPTV](https://apps.apple.com/app/smart-iptv-tv-and-movies-ott/id1492738910)||
 |[Snappier IPTV](https://apps.apple.com/app/snappier-iptv/id1579702567)||
+|[Spatial Video Studio](https://apps.apple.com/app/id6523429904)||
 |[TracyPlayer](https://apps.apple.com/app/tracyplayer/id6450770064)|[TracyPlayer](https://testflight.apple.com/join/eNmYbmZN)|
 |[UHF - Love your IPTV](https://apps.apple.com/app/uhf-love-your-iptv/id6443751726)||
 |[Zen IPTV](https://apps.apple.com/fr/app/zen-iptv/id6458223193)||
@@ -96,7 +99,7 @@ dependencies: [
 
 ## Usage
 
-#### initialize
+#### Initialization
 
 ```swift
 KSOptions.secondPlayerType = KSMEPlayer.self

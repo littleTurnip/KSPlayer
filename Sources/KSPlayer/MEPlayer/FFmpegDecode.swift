@@ -101,7 +101,7 @@ class FFmpegDecode: DecodeProtocol {
                     return
                 } else if result == AVError.tryAgain.code {
                     // png封面需要多次调用avcodec_send_packet才能显示封面.其他格式的不要加这个处理。
-                    if !hasDecodeSuccess, packet.assetTrack.image {
+                    if !hasDecodeSuccess, packet.assetTrack.isImage {
                         let status = avcodec_send_packet(codecContext, packet.corePacket)
                         if status != 0 {
                             return

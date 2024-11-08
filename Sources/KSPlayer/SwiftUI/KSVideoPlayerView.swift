@@ -35,14 +35,6 @@ public struct KSVideoPlayerView: View {
     private var focusableView: FocusableView?
     @State
     private var isDropdownShow = false
-    public init(url: URL, options: KSOptions, title: String? = nil) {
-        self.init(coordinator: KSVideoPlayer.Coordinator(), url: url, options: options, title: title, subtitleDataSource: nil)
-    }
-
-    // xcode 15.2还不支持对MainActor参数设置默认值
-    public init(coordinator: KSVideoPlayer.Coordinator, url: URL, options: KSOptions, title: String? = nil, subtitleDataSource: SubtitleDataSource? = nil) {
-        self.init(coordinator: coordinator, url: .init(wrappedValue: url), options: .init(wrappedValue: options), title: .init(wrappedValue: title ?? url.lastPathComponent), subtitleDataSource: subtitleDataSource)
-    }
 
     public init(coordinator: KSVideoPlayer.Coordinator, url: State<URL?>, options: State<KSOptions>, title: State<String>, subtitleDataSource: SubtitleDataSource?) {
         _url = url
@@ -109,6 +101,9 @@ public struct KSVideoPlayerView: View {
                 .tint(.white)
                 .persistentSystemOverlays(.hidden)
                 .toolbar(.hidden, for: .automatic)
+            #if !os(macOS)
+                .toolbar(.hidden, for: .tabBar)
+            #endif
                 .focusedObject(config)
                 .onChange(of: config.isMaskShow) { newValue in
                     if newValue {
@@ -168,7 +163,7 @@ public struct KSVideoPlayerView: View {
     }
 
     private var controllerView: some View {
-        VideoControllerView(config: config, title: $title, playerWidth: config.playerLayer?.player.view.frame.width ?? 0, focusableView: $focusableView)
+        VideoControllerView(config: config, title: $title, playerWidth: config.playerLayer?.player.view.frame.width ?? 0, focusableView: _focusableView)
             .focused($focusableView, equals: .controller)
             .opacity(config.isMaskShow ? 1 : 0)
         #if os(tvOS)
@@ -189,8 +184,26 @@ public struct KSVideoPlayerView: View {
         #endif
     }
 
-    fileprivate enum FocusableView {
+    enum FocusableView {
         case play, controller, slider
+    }
+}
+
+@available(iOS 16.0, macOS 13.0, tvOS 16.0, *)
+public extension KSVideoPlayerView {
+    init(url: URL, options: KSOptions, title: String? = nil) {
+        self.init(coordinator: KSVideoPlayer.Coordinator(), url: url, options: options, title: title, subtitleDataSource: nil)
+    }
+
+    // xcode 15.2还不支持对MainActor参数设置默认值
+    init(coordinator: KSVideoPlayer.Coordinator, url: URL, options: KSOptions, title: String? = nil, subtitleDataSource: SubtitleDataSource? = nil) {
+        self.init(coordinator: coordinator, url: .init(wrappedValue: url), options: .init(wrappedValue: options), title: .init(wrappedValue: title ?? url.lastPathComponent), subtitleDataSource: subtitleDataSource)
+    }
+
+    init(playerLayer: KSPlayerLayer) {
+        let coordinator = KSVideoPlayer.Coordinator()
+        coordinator.playerLayer = playerLayer
+        self.init(coordinator: coordinator, url: playerLayer.url, options: playerLayer.options)
     }
 }
 
@@ -287,12 +300,19 @@ struct VideoControllerView: View {
     @Binding
     fileprivate var title: String
     fileprivate let playerWidth: CGFloat
-    @FocusState.Binding
+    @FocusState
     fileprivate var focusableView: KSVideoPlayerView.FocusableView?
     @State
     private var showVideoSetting = false
     @Environment(\.dismiss)
     private var dismiss
+    init(config: KSVideoPlayer.Coordinator, title: Binding<String>, playerWidth: CGFloat, focusableView: FocusState<KSVideoPlayerView.FocusableView?>) {
+        self.config = config
+        _title = title
+        self.playerWidth = playerWidth
+        _focusableView = focusableView
+    }
+
     public var body: some View {
         VStack {
             #if os(tvOS)
@@ -516,7 +536,7 @@ struct VideoControllerView: View {
         Button {
             (config.playerLayer as? KSComplexPlayerLayer)?.isPipActive.toggle()
         } label: {
-            Image(systemName: "rectangle.on.rectangle.circle.fill")
+            Image(systemName: "pip.fill")
         }
     }
 

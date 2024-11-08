@@ -45,7 +45,6 @@ public final class AudioUnitPlayer: AudioOutput {
     }
 
     public var playbackRate: Float = 1
-    public var volume: Float = 1
     public var isMuted: Bool = false
     private var outputLatency = TimeInterval(0)
     public init() {
@@ -109,6 +108,17 @@ public final class AudioUnitPlayer: AudioOutput {
 
     public func invalidate() {
         AudioUnitUninitialize(audioUnitForOutput)
+    }
+
+    public var volume: Float {
+        get {
+            var volume = AudioUnitParameterValue(0.0)
+            AudioUnitGetParameter(audioUnitForOutput, kHALOutputParam_Volume, kAudioUnitScope_Input, 0, &volume)
+            return volume
+        }
+        set {
+            AudioUnitSetParameter(audioUnitForOutput, kHALOutputParam_Volume, kAudioUnitScope_Input, 0, newValue, 0)
+        }
     }
 }
 

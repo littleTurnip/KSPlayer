@@ -38,13 +38,13 @@ public class FFmpegAssetTrack: MediaPlayerTrack {
     public var dovi: DOVIDecoderConfigurationRecord?
     public let fieldOrder: FFmpegFieldOrder
     public let formatDescription: CMFormatDescription?
+    //    video stream is an image
+    public var isImage = false
+    // video consists of multiple sparse still images
+    public var isStillImage = false
     var closedCaptionsTrack: FFmpegAssetTrack?
     var bitStreamFilter: BitStreamFilter.Type?
     var seekByBytes = false
-//    video stream is an image
-    var image = false
-    // video consists of multiple sparse still images
-    var stillImage = false
     public var description: String {
         var description = codecName
         if let formatName {
@@ -78,10 +78,10 @@ public class FFmpegAssetTrack: MediaPlayerTrack {
         self.init(codecpar: codecpar)
         self.stream = stream
         if stream.pointee.disposition & AV_DISPOSITION_STILL_IMAGE != 0 {
-            stillImage = true
+            isStillImage = true
         }
         if stream.pointee.nb_frames == 1 || codecpar.codec_id == AV_CODEC_ID_MJPEG || codecpar.codec_id == AV_CODEC_ID_PNG {
-            image = true
+            isImage = true
         }
         let metadata = toDictionary(stream.pointee.metadata)
         if let value = metadata["variant_bitrate"] ?? metadata["BPS"], let bitRate = Int64(value) {
